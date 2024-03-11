@@ -25,7 +25,7 @@ public class CallStack extends AbstractStack {
 		return stack[pointer];
 	}
 	
-	public boolean add(short address) {
+	public boolean push(short address) {
 		if (pointer >= 16) return false; // stack is full
 		
 		stack[++pointer] = address;

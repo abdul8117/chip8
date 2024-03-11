@@ -5,7 +5,7 @@ public abstract class AbstractStack {
 	
 	abstract short peek();
 	
-	abstract boolean add(short address);
+	abstract boolean push(short address);
 	
 	abstract void pop();
 }
