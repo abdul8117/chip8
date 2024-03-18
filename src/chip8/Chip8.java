@@ -6,7 +6,6 @@ public class Chip8 {
 		// TODO Auto-generated method stub
 		System.out.println("Heyo");
 		System.out.println(":3");
-
 	}
 
 }

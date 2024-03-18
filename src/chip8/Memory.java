@@ -5,109 +5,188 @@ package chip8;
  */
 
 public class Memory {
-	
-	byte[] memory = new byte[4096]; // 4 KiB of memory
-	byte[] registers = new byte[16]; // sixteen 8-bit registers
-	byte soundTimer, delayTimer; // two, special-purpose 8-bit registers
 
-	short pc; // program counter
-	CallStack stack; // call stack containing up to sixteen 16-bit values
-	
-	/*
-	 * Constructor
-	 */
-	public Memory() {
-		// ...
-	}
+    byte[] memory = new byte[4096]; // 4 KiB of memory
+    byte[] registers = new byte[16]; // sixteen 8-bit registers
+    byte soundTimer, delayTimer; // two, special-purpose 8-bit registers
 
-	public decodeAndExecuteInstruction(short instruction) {
+    short pc; // program counter
+    CallStack stack; // call stack containing up to sixteen 16-bit values
 
-		short nnn = instruction & 0xFFF;
-		byte n;
-		byte x = (instruction & 0xF00) >> 8;
-		byte y;
-		byte kk;
+    /*
+     * Constructor
+     */
+    public Memory() {
+        // ...
+    }
 
-		switch ((instruction & 0xF000) >> 12):
-			case 0x001:
-				// ...
-				break;
-			
-			case 0x002:
-				// Call subroutine at nnn
-				stack.push(pc);
-				pc = nnn;
-				break;
-			
-			case 0x003:
-				// Skip next instruction if Vx = kk
-				if (registers[x] == kk) 
-					pc += 2;
-				break;
-			
-			// TODO: 0x004, 0x005, 0x006
+    public decodeAndExecuteInstruction(short instruction) {
 
-			case 0x007:
-				// Sets Vx to Vx + kk
-				registers[x] += kk;
-				break;
-			
-			case 0x009:
-				// Skip next instruction if Vx != Vy
-				if (registers[x] != registers[y])
-					pc += 2;
-				break;
-			
-			case 0x000A:
+        short nnn = instruction & 0xFFF;
+        byte n;
+        byte x = (instruction & 0xF00) >> 8;
+        byte y;
+        byte kk;
 
-			case 0x000B:
+        switch (instruction) {
+            case 0x00E0:
+                // Clear the display
+                // TODO
+                break;
 
-			case 0x000C:
+            case 0x00EE:
+                //  Return from a subroutine.
+                // The interpreter sets the program counter to the address
+                // at the top of the stack, then subtracts 1 from the stack
+                // pointer.
 
-			case 0x000D:
+                // TODO
+                break;
+        }
 
+        switch ((instruction & 0xF000) >> 12) {
+            case 0x0001:
+                // Kathy
+                break;
 
-		
-		switch (instruction & 0xF00F):
-			case 0x8000:
-				// TODO
-				break;
-			
-			case 0x8001:
-				// TODO
-				break;
+            case 0x0002:
+                // Call subroutine at nnn
+                stack.push(pc);
+                pc = nnn;
+                break;
 
-			case 0x8002:
-				// TODO
-				break;
+            case 0x0003:
+                // Skip next instruction if Vx = kk
+                if (registers[x] == kk)
+                    pc += 2;
+                break;
 
-			case 0x8003:
-				// TODO
-				break;
-			
-			case 0x8004:
-				// TODO
-				break;
+            case 0x0004:
+                // Kathy
+                break;
 
-			case 0x8005:
-				// TODO
-				break;
-			
-			case 0x8006:
-				// TODO
-				break;
+            case 0x0005:
+                // Abdul
+                break;
 
-			case 0x8007:
-				// TODO
-				break;
+            case 0x0006:
+                // Kathy
+                break;
 
-			case 0x800E:
-				// TODO
-				break;
-		
-			}
-	
+            case 0x0007:
+                // Sets Vx to Vx + kk
+                registers[x] += kk;
+                break;
+
+            case 0x0009:
+                // Skip next instruction if Vx != Vy
+                if (registers[x] != registers[y])
+                    pc += 2;
+                break;
+
+            case 0x000A:
+                // Kathy
+                break;
+
+            case 0x000B:
+                // Abdul
+                break;
+
+            case 0x000C:
+                // Kathy
+                break;
+
+            case 0x000D:
+                // TODO for when we have implemented a screen
+                break;
+        }
 
 
+        switch (instruction & 0xF00F) {
+            case 0x8000:
+                // Abdul
+                break;
 
-		}
+            case 0x8001:
+                // Kathy
+                break;
+
+            case 0x8002:
+                // Abdul
+                break;
+
+            case 0x8003:
+                // Kathy
+                break;
+
+            case 0x8004:
+                // Kathy
+                break;
+
+            case 0x8005:
+                // Abdul
+                break;
+
+            case 0x8006:
+                // Abdul
+                break;
+
+            case 0x8007:
+                // Kathy
+                break;
+
+            case 0x800E:
+                // Kathy
+                break;
+
+            case 0x9000:
+                // Abdul
+                if (registers[x] != registers[y])
+                    pc += 2;
+                break;
+        }
+
+        // Some of the following instructions won't be written until we
+        // have implemented the Keyboard class
+        switch (instruction & 0xF0FF) {
+            case 0xE09E:
+                break;
+
+            case 0xE0A1:
+                break;
+
+            case 0xF007:
+                // Kathy
+                break;
+
+            case 0xF00A:
+                break;
+
+            case 0xF015:
+                // Abdul
+                break;
+
+            case 0xF018:
+                // Abdul
+                break;
+
+            case 0xF01E:
+                // Kathy
+                break;
+
+            case 0xF029:
+                break;
+
+            case 0xF033:
+                break;
+
+            case 0xF055:
+                // Together?
+                break;
+
+            case 0xF065:
+                // TODO: figure out what this instruction should be doing
+                break;
+        }
+    }
+}
