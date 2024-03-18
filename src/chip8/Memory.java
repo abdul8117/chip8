@@ -23,15 +23,15 @@ public class Memory {
     public decodeAndExecuteInstruction(short instruction) {
 
         short nnn = instruction & 0xFFF;
-        byte n;
+        byte n; // Kathy
         byte x = (instruction & 0xF00) >> 8;
-        byte y;
-        byte kk;
+        byte y; // Kathy
+        byte kk; // Kathy
 
         switch (instruction) {
             case 0x00E0:
                 // Clear the display
-                // TODO
+                // TODO when the Screen has been implemented
                 break;
 
             case 0x00EE:
@@ -40,7 +40,8 @@ public class Memory {
                 // at the top of the stack, then subtracts 1 from the stack
                 // pointer.
 
-                // TODO
+                pc = stack.peek();
+                stack.push();
                 break;
         }
 
@@ -66,7 +67,8 @@ public class Memory {
                 break;
 
             case 0x0005:
-                // Abdul
+                if (registers[x] == registers[y])
+                    pc += 2;
                 break;
 
             case 0x0006:
@@ -89,7 +91,7 @@ public class Memory {
                 break;
 
             case 0x000B:
-                // Abdul
+                pc = nnn + registers[0];
                 break;
 
             case 0x000C:
@@ -104,7 +106,7 @@ public class Memory {
 
         switch (instruction & 0xF00F) {
             case 0x8000:
-                // Abdul
+                registers[x] = registers[y];
                 break;
 
             case 0x8001:
@@ -112,7 +114,7 @@ public class Memory {
                 break;
 
             case 0x8002:
-                // Abdul
+                registers[x] = registers[x] & registers[y];
                 break;
 
             case 0x8003:
@@ -124,11 +126,13 @@ public class Memory {
                 break;
 
             case 0x8005:
-                // Abdul
+                registers[0xF] = registers[x] > registers[y] ? 1 : 0;
+                registers[x] -= registers[y];
                 break;
 
             case 0x8006:
-                // Abdul
+                registers[0xF] = (registers[x] & 0x0F) == 0x01 ? 1 : 0;
+                registers[x] = registers[x] >> 1;
                 break;
 
             case 0x8007:
@@ -163,11 +167,11 @@ public class Memory {
                 break;
 
             case 0xF015:
-                // Abdul
+                delayTimer = registers[x];
                 break;
 
             case 0xF018:
-                // Abdul
+                soundTimer = registers[x];
                 break;
 
             case 0xF01E:
