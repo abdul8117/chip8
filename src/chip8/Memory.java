@@ -20,11 +20,11 @@ public class Memory {
         // ...
     }
 
-    public decodeAndExecuteInstruction(short instruction) {
+    public void decodeAndExecuteInstruction(short instruction) {
 
-        short nnn = instruction & 0xFFF;
+        short nnn = (short) (instruction & 0xFFF);
         byte n; // Kathy
-        byte x = (instruction & 0xF00) >> 8;
+        byte x = (byte) ((instruction & 0xF00) >> 8);
         byte y; // Kathy
         byte kk; // Kathy
 
@@ -41,7 +41,7 @@ public class Memory {
                 // pointer.
 
                 pc = stack.peek();
-                stack.push();
+                stack.pop();
                 break;
         }
 
@@ -91,7 +91,7 @@ public class Memory {
                 break;
 
             case 0x000B:
-                pc = nnn + registers[0];
+                pc = (short) (nnn + registers[0]);
                 break;
 
             case 0x000C:
@@ -114,7 +114,7 @@ public class Memory {
                 break;
 
             case 0x8002:
-                registers[x] = registers[x] & registers[y];
+                registers[x] = (byte) (registers[x] & registers[y]);
                 break;
 
             case 0x8003:
@@ -126,13 +126,13 @@ public class Memory {
                 break;
 
             case 0x8005:
-                registers[0xF] = registers[x] > registers[y] ? 1 : 0;
+                registers[0xF] = (byte) (registers[x] > registers[y] ? 1 : 0);
                 registers[x] -= registers[y];
                 break;
 
             case 0x8006:
-                registers[0xF] = (registers[x] & 0x0F) == 0x01 ? 1 : 0;
-                registers[x] = registers[x] >> 1;
+                registers[0xF] = (byte) ((registers[x] & 0x0F) == 0x01 ? 1 : 0);
+                registers[x] = (byte) (registers[x] >> 1);
                 break;
 
             case 0x8007:
