@@ -2,7 +2,7 @@ package chip8;
 
 import java.util.NoSuchElementException;
 
-public class CallStack extends AbstractStack {
+public class CallStack {
 	private short[] stack; // the call stack
 	private byte pointer; // points to the topmost value on the stack
 	
