@@ -6,7 +6,7 @@ package chip8;
 
 public class Memory {
 
-    byte[] memory = new byte[4096]; // 4 KiB of memory
+    byte[] memory = new byte[4096]; // 4 KiB of memory (4 * 2^10 bytes)
     byte[] registers = new byte[16]; // sixteen 8-bit registers
     byte soundTimer, delayTimer; // two, special-purpose 8-bit registers
 
