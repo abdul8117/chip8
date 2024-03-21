@@ -103,7 +103,6 @@ public class Memory {
                 break;
         }
 
-
         switch (instruction & 0xF00F) {
             case 0x8000:
                 registers[x] = registers[y];

@@ -1,26 +1,24 @@
 package chip8;
 
 /*
-* This class will define the font which are all the hexadecimal digits which
-* are 0 to 9 and A to F. This will be stored in an array so that if you
-* wanted the representation for the digit B, you simply need to type font[0xB].
-*
-* In addition, this class will also keep track of what keys are pressed down
-* slash active. This can just be an array of length 16 (the CHIP-8 keypad has
-* sixteen keys).
-*
-* Original layout:
-* 1 2 3 C
-* 4 5 6 D
-* 7 8 9 E
-* A 0 B F
-*
-* Our layout:
-* 1 2 3 4
-* Q W E R
-* A S D F
-* Z X C V
-*
+ * This class will define the font which are all the hexadecimal digits - 0 to 9
+ * and A to F. This will be stored in an array so that if you
+ * wanted the representation for the digit B, you simply need to type font[0xB].
+ *
+ * In addition, this class will also keep track of what keys are pressed down.
+ * This can just be an array of length 16 (the CHIP-8 keypad has sixteen keys).
+ *
+ * Original layout:
+ * 1 2 3 C
+ * 4 5 6 D
+ * 7 8 9 E
+ * A 0 B F
+ *
+ * Our layout:
+ * 1 2 3 4
+ * Q W E R
+ * A S D F
+ * Z X C V
  */
 
 public class Keyboard {
@@ -44,6 +42,10 @@ public class Keyboard {
     };
 
     private boolean[] isKeyDown = new boolean[16];
+
+    public Keyboard() {
+        // TODO Write constructor
+    }
 
     public void keyDown(int key) {
         throw new UnsupportedOperationException();
