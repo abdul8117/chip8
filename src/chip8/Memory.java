@@ -22,11 +22,12 @@ public class Memory {
 
     public void decodeAndExecuteInstruction(short instruction) {
 
+        //Super Chip-48 varaibles: 
         short nnn = (short) (instruction & 0xFFF);
-        byte n; // Kathy
+        byte n = (byte) (instruction & 0x00F); // Kathy
         byte x = (byte) ((instruction & 0xF00) >> 8);
-        byte y; // Kathy
-        byte kk; // Kathy
+        byte y = (byte) ((instruction & 0x0F0) >> 4); // Kathy
+        byte kk = (byte) (instruction & 0x0FF); // Kathy
 
         switch (instruction) {
             case 0x00E0:
@@ -48,6 +49,7 @@ public class Memory {
         switch ((instruction & 0xF000) >> 12) {
             case 0x0001:
                 // Kathy
+                //
                 break;
 
             case 0x0002:
