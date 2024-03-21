@@ -1,5 +1,8 @@
 package chip8;
 
+import java.util.Set;
+import java.util.Random;
+
 /*
  * This class represents the memory / RAM of a CHIP-8 virtual machine.
  */
@@ -9,6 +12,7 @@ public class Memory {
     byte[] memory = new byte[4096]; // 4 KiB of memory
     byte[] registers = new byte[16]; // sixteen 8-bit registers
     byte soundTimer, delayTimer; // two, special-purpose 8-bit registers
+    short I; //16 bit registers 
 
     short pc; // program counter
     CallStack stack; // call stack containing up to sixteen 16-bit values
@@ -20,9 +24,12 @@ public class Memory {
         // ...
     }
 
+    /**
+     * @param instruction
+     */
     public void decodeAndExecuteInstruction(short instruction) {
 
-        //Super Chip-48 varaibles: 
+        //chip 8 varaibles: 
         short nnn = (short) (instruction & 0xFFF);
         byte n = (byte) (instruction & 0x00F); // Kathy
         byte x = (byte) ((instruction & 0xF00) >> 8);
@@ -49,7 +56,8 @@ public class Memory {
         switch ((instruction & 0xF000) >> 12) {
             case 0x0001:
                 // Kathy
-                //
+                //Jump to location nnn.
+                pc = nnn;
                 break;
 
             case 0x0002:
@@ -66,15 +74,21 @@ public class Memory {
 
             case 0x0004:
                 // Kathy
+                // Skip next instruction if Vx != kk.
+                if(registers[x]!=kk)
+                    pc += 2;
                 break;
 
             case 0x0005:
+                //Skip next instruction if Vx = Vy.
                 if (registers[x] == registers[y])
                     pc += 2;
                 break;
 
             case 0x0006:
                 // Kathy
+                //Set Vx = kk.
+                registers[x]=kk;
                 break;
 
             case 0x0007:
@@ -90,14 +104,22 @@ public class Memory {
 
             case 0x000A:
                 // Kathy
+                //Set I = nnn.
+                I = nnn;
                 break;
 
             case 0x000B:
+                //Jump to location nnn + V0.
                 pc = (short) (nnn + registers[0]);
                 break;
 
             case 0x000C:
                 // Kathy
+                //Set Vx = random byte AND kk.
+                Random random = new Random();
+                byte randomNum = (byte) random.nextInt(256);
+
+                registers[x] = (byte) (randomNum & kk);
                 break;
 
             case 0x000D:
@@ -107,41 +129,60 @@ public class Memory {
 
         switch (instruction & 0xF00F) {
             case 0x8000:
+            //Set Vx = Vy.
                 registers[x] = registers[y];
                 break;
 
             case 0x8001:
                 // Kathy
+                // Set Vx = Vx OR Vy.
+                registers[x] = (byte) (registers[x] | registers[y]);
                 break;
 
             case 0x8002:
+                //Set Vx = Vx AND Vy.
                 registers[x] = (byte) (registers[x] & registers[y]);
                 break;
 
             case 0x8003:
                 // Kathy
+                //Set Vx = Vx XOR Vy.
+                registers[x] = (byte) (registers[x] ^ registers[y]);
                 break;
 
             case 0x8004:
                 // Kathy
+                //Set Vx = Vx + Vy, set VF = carry.
+                registers[0xF] = (byte) ((registers[x] + registers[y])> 255 ? 1: 0);
+                registers[x]= (byte) ((registers[x] + registers[y]) & 0x0FF);
+
                 break;
 
             case 0x8005:
+                //Set Vx = Vx - Vy, set VF = NOT borrow.
                 registers[0xF] = (byte) (registers[x] > registers[y] ? 1 : 0);
                 registers[x] -= registers[y];
                 break;
 
             case 0x8006:
+                //Set Vx = Vx SHR 1.
                 registers[0xF] = (byte) ((registers[x] & 0x0F) == 0x01 ? 1 : 0);
                 registers[x] = (byte) (registers[x] >> 1);
                 break;
 
             case 0x8007:
                 // Kathy
+                //Set Vx = Vy - Vx, set VF = NOT borrow.
+                registers[0xF] = (byte) ((registers[y]>registers[x]? 1: 0));
+                registers[x]= (byte) (registers[y] - registers[x]);
                 break;
 
+                ///******************************help ...********/
             case 0x800E:
                 // Kathy
+                //Set Vx = Vx SHL 1.
+                registers[0xF] = (byte)((registers[x] & 0x0F0)== 0x80? 1:0);
+                registers[x] <<= 1;
                 break;
 
             case 0x9000:
