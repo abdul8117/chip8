@@ -130,7 +130,7 @@ public class Memory {
                 break;
 
             case 0x8006:
-                registers[0xF] = (byte) ((registers[x] & 0x0F) == 0x01 ? 1 : 0);
+                registers[0xF] = (byte) ((registers[x] & 0x1) == 1 ? 1 : 0);
                 registers[x] = (byte) (registers[x] >> 1);
                 break;
 

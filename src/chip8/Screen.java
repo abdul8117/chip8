@@ -1,14 +1,22 @@
 package chip8;
 
+import javafx.stage.Stage;
+import javafx.scene.Scene;
+import javafx.scene.canvas.*;
+
 public class Screen {
     private static final int WIDTH = 64;
     private static final int HEIGHT = 32;
+    private static final int SCALE = 10;
 
     // true = white, false = black
-    private boolean[][] pixelArray = new boolean[WIDTH][HEIGHT];
+    private boolean[][] pixelArray = new boolean[WIDTH * SCALE][HEIGHT * SCALE];
 
     public Screen() {
         // TODO Write constructor
+
+
+
     }
 
     public boolean getPixel(int x, int y) {
