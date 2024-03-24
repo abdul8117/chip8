@@ -30,7 +30,7 @@ public class Screen {
         }
     }
 
-    public void render() {
+    public void renderScreen() {
         for (int i = 0; i < HEIGHT * SCALE; i++) {
             for (int j = 0; j < WIDTH * SCALE; j++) {
                 if (pixelArray[i][j])
@@ -44,10 +44,10 @@ public class Screen {
     }
 
     public boolean getPixel(int x, int y) {
-        return pixelArray[x][y];
+        return pixelArray[x * SCALE][y * SCALE];
     }
 
     public void setPixel(int x, int y) {
-        pixelArray[x][y] ^= true;
+        pixelArray[x * SCALE][y * SCALE] ^= true;
     }
 }
