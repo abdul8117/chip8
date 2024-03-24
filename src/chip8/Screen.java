@@ -30,6 +30,19 @@ public class Screen {
         }
     }
 
+    public void render() {
+        for (int i = 0; i < HEIGHT * SCALE; i++) {
+            for (int j = 0; j < WIDTH * SCALE; j++) {
+                if (pixelArray[i][j])
+                    gc.setFill(Color.WHITE);
+                else
+                    gc.setFill(Color.BLACK);
+
+                gc.fillRect(i, j, SCALE, SCALE);
+            }
+        }
+    }
+
     public boolean getPixel(int x, int y) {
         return pixelArray[x][y];
     }
