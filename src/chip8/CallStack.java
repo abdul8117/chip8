@@ -9,8 +9,8 @@ public class CallStack {
 	/*
 	 * Constructor initialising a call stack of size 16
 	 */
-	public CallStack() {
-		stack = new short[16];
+	public CallStack(int size) {
+		stack = new short[size];
 		pointer = -1; // will not point to an address if stack is empty
 	}
 	
