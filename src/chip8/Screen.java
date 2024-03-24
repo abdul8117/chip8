@@ -1,8 +1,5 @@
 package chip8;
 
-import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
-import javafx.scene.Scene;
 import javafx.scene.canvas.*;
 
 public class Screen {
@@ -16,7 +13,7 @@ public class Screen {
     private GraphicsContext gc;
 
     public Screen() {
-        Canvas c = new Canvas(WIDTH, HEIGHT);
+        Canvas c = new Canvas(WIDTH * SCALE, HEIGHT * SCALE);
         gc = c.getGraphicsContext2D();
         gc.fillRect(0, 0, c.getWidth(), c.getHeight()); // black screen
         clearScreen();
@@ -26,8 +23,8 @@ public class Screen {
      * This method simply sets every value in pixelArray to false/0/off.
      */
     public void clearScreen() {
-        for (int i = 0; i < HEIGHT; i++) {
-            for (int j = 0; j < WIDTH; j++) {
+        for (int i = 0; i < HEIGHT * SCALE; i++) {
+            for (int j = 0; j < WIDTH * SCALE; j++) {
                 pixelArray[i][j] = false;
             }
         }
@@ -37,12 +34,6 @@ public class Screen {
         return pixelArray[x][y];
     }
 
-    /*
-     * This method is called when a pixel in the sprite (which is being
-     * iterated through) is 1/true/on. If the screen pixel in x and y are
-     *  also turned on, then they should be turned off, and vice versa. This
-     *  represents an XOR operation.
-     */
     public void setPixel(int x, int y) {
         pixelArray[x][y] ^= true;
     }
