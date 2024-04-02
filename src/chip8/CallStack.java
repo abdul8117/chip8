@@ -3,14 +3,14 @@ package chip8;
 import java.util.NoSuchElementException;
 
 public class CallStack {
-	private short[] stack; // the call stack
-	private byte pointer; // points to the topmost value on the stack
+	private int[] stack; // the call stack
+	private short pointer; // points to the topmost value on the stack
 	
 	/*
 	 * Constructor initialising a call stack of size 16
 	 */
 	public CallStack(int size) {
-		stack = new short[size];
+		stack = new int[size];
 		pointer = -1; // will not point to an address if stack is empty
 	}
 	
@@ -18,7 +18,7 @@ public class CallStack {
 		return pointer == -1;
 	}
 	
-	public short peek() {
+	public int peek() {
 		if (isEmpty())
 			throw new NoSuchElementException("Stack is empty");
 		
