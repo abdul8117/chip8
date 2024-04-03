@@ -25,16 +25,13 @@ public class CallStack {
 		return stack[pointer];
 	}
 	
-	public boolean push(short address) {
-		if (pointer >= 16) return false; // stack is full
-		
+	public void push(short address) throws Exception {
+		if (pointer >= 16) throw new Exception("Stack is full");
 		stack[++pointer] = address;
-		
-		return true;
 	}
 	
-	public void pop() {
-		if (isEmpty()) return;
+	public void pop() throws Exception {
+		if (isEmpty()) throw new Exception("Stack is already empty");
 		
 		stack[pointer] = 0;
 		pointer -= 1;

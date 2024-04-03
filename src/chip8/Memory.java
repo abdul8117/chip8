@@ -18,7 +18,7 @@ public class Memory {
     short[] registers = new short[16]; // sixteen 8-bit registers
     short soundTimer, delayTimer; // two, special-purpose 8-bit registers
 
-    int pc; // program counter
+    int pc = 0x200; // program counter
     CallStack stack; // call stack containing up to sixteen 16-bit values
 
     /**
