@@ -21,11 +21,22 @@ public class Memory {
     int pc; // program counter
     CallStack stack; // call stack containing up to sixteen 16-bit values
 
-    /*
+    /**
      * Constructor
      */
     public Memory() {
         // ...
+    }
+
+    /**
+     * <p>This method loads a ROM file onto memory starting at address 0x200
+     * .</p>
+     * <br>
+     * <p>A ROM is a set of instructions that the CHIP-8 virtual machine will
+     * execute. It is essentially the program that will get executed.</p>
+     */
+    public void loadROM() {
+
     }
 
     public void decodeAndExecuteInstruction(int instruction) {
