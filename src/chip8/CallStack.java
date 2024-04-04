@@ -25,7 +25,7 @@ public class CallStack {
 		return stack[pointer];
 	}
 	
-	public void push(short address) throws Exception {
+	public void push(int address) throws Exception {
 		if (pointer >= 16) throw new Exception("Stack is full");
 		stack[++pointer] = address;
 	}

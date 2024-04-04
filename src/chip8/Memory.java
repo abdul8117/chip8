@@ -60,18 +60,30 @@ public class Memory {
                 // pointer.
 
                 pc = stack.peek();
-                stack.pop();
+
+                try {
+                    stack.pop();
+                }
+                catch (Exception e) {
+                    System.exit(101); // stack is already empty
+                }
                 break;
         }
 
-        switch ((instruction & 0xF000) >> 12) {
+        switch ((instruction & 0xF000) << 12) {
             case 0x0001:
                 // Kathy
                 break;
 
             case 0x0002:
                 // Call subroutine at nnn
-                stack.push(pc);
+                try {
+                    stack.push(pc);
+                }
+                catch (Exception e) {
+                    System.exit(100); // stack is already full
+                }
+
                 pc = nnn;
                 break;
 
