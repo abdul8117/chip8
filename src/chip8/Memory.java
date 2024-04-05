@@ -1,32 +1,51 @@
 package chip8;
 
-/*
- * This class represents the memory / RAM of a CHIP-8 virtual machine.
+/**
+ * <p>This class represents the memory / RAM of a CHIP-8 virtual machine.</p>
+ * <br>
+ * <p>CHIP-8 does not support two's complement so using the byte data type for
+ * these fields may cause issues because 8 bits in two's complement has a
+ * maximum value of 127 whereas a CHIP-8 virtual machine expects to
+ * represent numbers as big as 255.</p>
+ * <br>
+ * <p>We are not using ints instead because that would use a lot (a lot) more
+ * memory.</p>
  */
 
 public class Memory {
 
-    byte[] memory = new byte[4096]; // 4 KiB of memory (4 * 2^10 bytes)
-    byte[] registers = new byte[16]; // sixteen 8-bit registers
-    byte soundTimer, delayTimer; // two, special-purpose 8-bit registers
+    short[] memory = new short[4096]; // 4 KiB of memory (4 * 2^10 bytes)
+    short[] registers = new short[16]; // sixteen 8-bit registers
+    short soundTimer, delayTimer; // two, special-purpose 8-bit registers
 
-    short pc; // program counter
+    int pc = 0x200; // program counter
     CallStack stack; // call stack containing up to sixteen 16-bit values
 
-    /*
+    /**
      * Constructor
      */
     public Memory() {
         // ...
     }
 
-    public void decodeAndExecuteInstruction(short instruction) {
+    /**
+     * <p>This method loads a ROM file onto memory starting at address 0x200
+     * .</p>
+     * <br>
+     * <p>A ROM is a set of instructions that the CHIP-8 virtual machine will
+     * execute. It is essentially the program that will get executed.</p>
+     */
+    public void loadROM() {
 
-        short nnn = (short) (instruction & 0xFFF);
-        byte n; // Kathy
-        byte x = (byte) ((instruction & 0xF00) >> 8);
-        byte y; // Kathy
-        byte kk; // Kathy
+    }
+
+    public void decodeAndExecuteInstruction(int instruction) {
+
+        int nnn = instruction & 0xFFF;
+        short n; // Kathy
+        short x = (byte) ((instruction & 0xF00) >> 8);
+        short y; // Kathy
+        short kk; // Kathy
 
         switch (instruction) {
             case 0x00E0:
@@ -41,18 +60,30 @@ public class Memory {
                 // pointer.
 
                 pc = stack.peek();
-                stack.pop();
+
+                try {
+                    stack.pop();
+                }
+                catch (Exception e) {
+                    System.exit(101); // stack is already empty
+                }
                 break;
         }
 
-        switch ((instruction & 0xF000) >> 12) {
+        switch ((instruction & 0xF000) << 12) {
             case 0x0001:
                 // Kathy
                 break;
 
             case 0x0002:
                 // Call subroutine at nnn
-                stack.push(pc);
+                try {
+                    stack.push(pc);
+                }
+                catch (Exception e) {
+                    System.exit(100); // stack is already full
+                }
+
                 pc = nnn;
                 break;
 
@@ -91,7 +122,7 @@ public class Memory {
                 break;
 
             case 0x000B:
-                pc = (short) (nnn + registers[0]);
+                pc = nnn + registers[0];
                 break;
 
             case 0x000C:
@@ -113,7 +144,7 @@ public class Memory {
                 break;
 
             case 0x8002:
-                registers[x] = (byte) (registers[x] & registers[y]);
+                registers[x] = (short) (registers[x] & registers[y]);
                 break;
 
             case 0x8003:
@@ -125,13 +156,13 @@ public class Memory {
                 break;
 
             case 0x8005:
-                registers[0xF] = (byte) (registers[x] > registers[y] ? 1 : 0);
+                registers[0xF] = (short) (registers[x] > registers[y] ? 1 : 0);
                 registers[x] -= registers[y];
                 break;
 
             case 0x8006:
-                registers[0xF] = (byte) ((registers[x] & 1) == 1 ? 1 : 0);
-                registers[x] = (byte) (registers[x] >> 1);
+                registers[0xF] = (short) ((registers[x] & 1) == 1 ? 1 : 0);
+                registers[x] = (short) (registers[x] >> 1);
                 break;
 
             case 0x8007:
