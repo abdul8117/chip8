@@ -9,10 +9,10 @@ import java.util.Random;
 
 public class Memory {
 
-    byte[] memory = new byte[4096]; // 4 KiB of memory
-    byte[] registers = new byte[16]; // sixteen 8-bit registers
-    byte soundTimer, delayTimer; // two, special-purpose 8-bit registers
-    short I; //16 bit registers 
+    short[] memory = new short[4096]; // 4 KiB of memory
+    short[] registers = new short[16]; // sixteen 8-bit registers
+    short soundTimer, delayTimer; // two, special-purpose 8-bit registers
+    int I; //16 bit registers 
 
     short pc; // program counter
     CallStack stack; // call stack containing up to sixteen 16-bit values
@@ -151,10 +151,10 @@ public class Memory {
                 break;
 
             case 0x8004:
-                // Kathy
+                // Kathy -> fixed
                 //Set Vx = Vx + Vy, set VF = carry.
-                registers[0xF] = (byte) ((registers[x] + registers[y])> 255 ? 1: 0);
-                registers[x]= (byte) ((registers[x] + registers[y]) & 0x0FF);
+                registers[0xF] = (short) ((registers[x] + registers[y])> 255 ? 1: 0);
+                registers[x]= (short) ((registers[x] + registers[y]) & 0x0FF);
 
                 break;
 
@@ -177,11 +177,10 @@ public class Memory {
                 registers[x]= (byte) (registers[y] - registers[x]);
                 break;
 
-                ///******************************help ...********/
             case 0x800E:
                 // Kathy
                 //Set Vx = Vx SHL 1.
-                registers[0xF] = (byte)((registers[x] & 0x0F0)== 0x80? 1:0);
+                registers[0xF] = (short)(((registers[x] & 0x80)>>7)== 1? 1:0);
                 registers[x] <<= 1;
                 break;
 
