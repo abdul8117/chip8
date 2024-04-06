@@ -78,7 +78,7 @@ public class Memory {
                 break;
         }
 
-        switch ((instruction & 0xF000) << 12) {
+        switch ((instruction & 0xF000) >> 12) {
             case 0x0001:
                 // Jump to location nnn.
                 pc = nnn;
@@ -144,7 +144,7 @@ public class Memory {
                 // Set Vx = random byte AND kk.
                 Random random = new Random();
                 short randomNum = (short) random.nextInt(256);
-                registers[x] = (short) randomNum & kk;
+                registers[x] = (short) (randomNum & kk);
                 break;
 
             case 0x000D:
