@@ -7,11 +7,13 @@ import exceptions.StackOverflowException;
 public class CallStack {
     private int[] stack; // the call stack
     private short pointer; // points to the topmost value on the stack
+    private int size;
 
     /**
      * Constructor initialising a call stack and stack pointer.
      */
     public CallStack(int size) {
+        this.size = size;
         stack = new int[size];
         pointer = -1; // will not point to an address if stack is empty
     }

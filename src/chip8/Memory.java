@@ -1,10 +1,11 @@
 package chip8;
 
+import java.io.*;
 import java.util.Random;
 
 /**
  * This class represents the memory / RAM of a CHIP-8 virtual machine.
-*/
+ */
 
 /**
  * <p>This class represents the memory / RAM of a CHIP-8 virtual machine.</p>
@@ -16,14 +17,14 @@ import java.util.Random;
  * <br>
  * <p>We are not using ints instead because that would use a lot (a lot) more
  * memory.</p>
-*/
+ */
 
 public class Memory {
 
     short[] memory = new short[4096]; // 4 KiB of memory
     short[] registers = new short[16]; // sixteen 8-bit registers
     short soundTimer, delayTimer; // two, special-purpose 8-bit registers
-    int I; //16 bit registers 
+    int I; // 16 bit register
 
     int pc = 0x200; // program counter
     CallStack stack; // call stack containing up to sixteen 16-bit values
@@ -43,7 +44,7 @@ public class Memory {
      * execute. It is essentially the program that will get executed.</p>
      */
     public void loadROM() {
-        // ...
+        int[] program = getAllInstructions("test_opcode");
     }
 
     public void decodeAndExecuteInstruction(int instruction) {
@@ -52,7 +53,7 @@ public class Memory {
         short n = (short) (instruction & 0xF);
         short x = (short) ((instruction & 0xF00) >> 8);
         short y = (short) ((instruction & 0xF0) >> 4);
-        short kk = (short) (instruction & 0xFF); 
+        short kk = (short) (instruction & 0xFF);
 
         switch (instruction) {
             case 0x00E0:
@@ -70,11 +71,10 @@ public class Memory {
 
                 try {
                     stack.pop();
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     System.exit(101); // stack is already empty
                 }
-                
+
                 break;
         }
 
@@ -88,8 +88,7 @@ public class Memory {
                 // Call subroutine at nnn
                 try {
                     stack.push(pc);
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     System.exit(100); // stack is already full
                 }
 
@@ -176,7 +175,7 @@ public class Memory {
             case 0x8004:
                 // Set Vx = Vx + Vy, set VF = carry.
                 registers[0xF] = (short) ((registers[x] + registers[y]) > 255 ? 1 : 0);
-                registers[x]= (short) ((registers[x] + registers[y]) & 0xFF);
+                registers[x] = (short) ((registers[x] + registers[y]) & 0xFF);
                 break;
 
             case 0x8005:
@@ -194,7 +193,7 @@ public class Memory {
             case 0x8007:
                 // Set Vx = Vy - Vx, set VF = NOT borrow.
                 registers[0xF] = (short) ((registers[y] > registers[x] ? 1 : 0));
-                registers[x]= (short) (registers[y] - registers[x]);
+                registers[x] = (short) (registers[y] - registers[x]);
                 break;
 
             case 0x800E:
@@ -250,5 +249,47 @@ public class Memory {
                 // TODO: figure out what this instruction should be doing
                 break;
         }
+    }
+
+    /**
+     * Fetches every instruction present in a provided ROM, storing them in
+     * an array.
+     * @param fileName name of the ROM, without the .ch8 file extension
+     * @return an array of type int[]
+     */
+    private static int[] getAllInstructions(String fileName) {
+        int[] instructions = new int[4096 - 512];
+        String path = "roms/" + fileName + "ch.8";
+
+        try {
+            DataInputStream input = new DataInputStream(
+                    new BufferedInputStream(
+                            new FileInputStream(path)
+                    )
+            );
+
+            short instruction;
+            boolean eof = false;
+            int i = 0;
+
+            while (!eof) {
+                try {
+                    instruction = input.readShort();
+                    instructions[i] =
+                            Integer.decode(
+                                "0x" + Integer.toHexString(
+                                        Short.toUnsignedInt(instruction)
+                                )
+                            );
+                } catch (IOException e) {
+                    eof = true;
+                }
+            }
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return instructions;
     }
 }

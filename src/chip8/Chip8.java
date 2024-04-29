@@ -12,6 +12,8 @@ public class Chip8 extends Application {
 		System.out.println(":3");
 
 		launch();
+
+
 	}
 
 	@Override

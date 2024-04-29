@@ -1,6 +1,7 @@
 package chip8;
 
 import javafx.scene.canvas.*;
+import javafx.scene.paint.Color;
 
 public class Screen {
     private static final int WIDTH = 64;
