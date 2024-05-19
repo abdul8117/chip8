@@ -2,6 +2,7 @@ package chip8;
 
 import java.io.*;
 import java.util.Random;
+import java.lang.ArrayIndexOutOfBoundsException;
 
 /**
  * This class represents the memory / RAM of a CHIP-8 virtual machine.
@@ -45,6 +46,15 @@ public class Memory {
      */
     public void loadROM() {
         int[] program = getAllInstructions("test_opcode");
+
+	for (int i = 0; i < program.length; i++) {
+		try {
+			memory[i + 0x200] = program[i];
+		} catch (ArrayIndexOutOfBoundsException e) {
+			System.err.println("Program is too large.");
+			System.exit(200); // input program is too large for it to be stored in the available amount of memory
+		}
+	}
     }
 
     public void decodeAndExecuteInstruction(int instruction) {
