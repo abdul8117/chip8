@@ -16,14 +16,13 @@ import java.lang.ArrayIndexOutOfBoundsException;
  * maximum value of 127 whereas a CHIP-8 virtual machine expects to
  * represent numbers as big as 255.</p>
  * <br>
- * <p>We are not using ints instead because that would use a lot (a lot) more
+ * <p>We are not using ints instead because that would use a lot more
  * memory.</p>
  */
 
 public class Memory {
 
-    short[] memory = new short[4096]; // 4 KiB of memory
-    short[] registers = new short[16]; // sixteen 8-bit registers
+    short[] memory, registers;
     short soundTimer, delayTimer; // two, special-purpose 8-bit registers
     int I; // 16 bit register
 
@@ -33,8 +32,14 @@ public class Memory {
     /**
      * Constructor
      */
-    public Memory() {
-        // ...
+    public Memory(String romName) {
+	memory = new short[4096];         // 4 KiB of memory
+	registers = new short[16];        // sixteen 8-bit registers
+	soundTimer = delayTimer = I = 0;  // special purpose registers
+	pc = 0x200;                       // program counter
+	stack = new CallStack(16);        // call/runtime stack
+
+	loadRom(romName);
     }
 
     /**
@@ -44,8 +49,8 @@ public class Memory {
      * <p>A ROM is a set of instructions that the CHIP-8 virtual machine will
      * execute. It is essentially the program that will get executed.</p>
      */
-    public void loadROM() {
-        int[] program = getAllInstructions("test_opcode");
+    public void loadROM(String romName) {
+        int[] program = getAllInstructions(romName);
 
 	for (int i = 0; i < program.length; i++) {
 		try {
