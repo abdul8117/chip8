@@ -6,60 +6,52 @@ import java.lang.ArrayIndexOutOfBoundsException;
 
 /**
  * This class represents the memory / RAM of a CHIP-8 virtual machine.
- */
-
-/**
- * <p>This class represents the memory / RAM of a CHIP-8 virtual machine.</p>
  * <br>
- * <p>CHIP-8 does not support two's complement so using the byte data type for
+ * CHIP-8 does not support two's complement so using the byte data type for
  * these fields may cause issues because 8 bits in two's complement has a
  * maximum value of 127 whereas a CHIP-8 virtual machine expects to
- * represent numbers as big as 255.</p>
- * <br>
- * <p>We are not using ints instead because that would use a lot more
- * memory.</p>
+ * represent numbers as big as 255.
  */
 
 public class Memory {
-
-    short[] memory, registers;
-    short soundTimer, delayTimer; // two, special-purpose 8-bit registers
-    int I; // 16 bit register
-
-    int pc = 0x200; // program counter
-    CallStack stack; // call stack containing up to sixteen 16-bit values
+    int[] memory;
+    short[] registers;
+    short soundTimer, delayTimer;
+    int I, pc;
+    CallStack stack;
 
     /**
-     * Constructor
+     * Initialises the registers and runtime stack, and loads the ROM into
+     * memory.
      */
     public Memory(String romName) {
-	memory = new short[4096];         // 4 KiB of memory
-	registers = new short[16];        // sixteen 8-bit registers
-	soundTimer = delayTimer = I = 0;  // special purpose registers
-	pc = 0x200;                       // program counter
-	stack = new CallStack(16);        // call/runtime stack
+        memory = new int[4096];         // 4 KiB of memory
+        registers = new short[16];        // sixteen 8-bit registers
+        soundTimer = delayTimer = 0;      // special purpose registers
+        I = 0;
+        pc = 0x200;                       // program counter
+        stack = new CallStack(16);   // call/runtime stack
 
-	loadRom(romName);
+        loadROM(romName);
     }
 
     /**
-     * <p>This method loads a ROM file onto memory starting at address 0x200
-     * .</p>
+     * This method loads a ROM file onto memory starting at address 0x200.
      * <br>
-     * <p>A ROM is a set of instructions that the CHIP-8 virtual machine will
-     * execute. It is essentially the program that will get executed.</p>
+     * A ROM is a set of instructions that the CHIP-8 virtual machine will
+     * execute. It is essentially the program that will get executed.
      */
     public void loadROM(String romName) {
         int[] program = getAllInstructions(romName);
 
-	for (int i = 0; i < program.length; i++) {
-		try {
-			memory[i + 0x200] = program[i];
-		} catch (ArrayIndexOutOfBoundsException e) {
-			System.err.println("Program is too large.");
-			System.exit(200); // input program is too large for it to be stored in the available amount of memory
-		}
-	}
+        for (int i = 0; i < program.length; i++) {
+            try {
+                memory[i + 0x200] = (short) program[i];
+            } catch (ArrayIndexOutOfBoundsException e) {
+                System.err.println("Program is too large.");
+                System.exit(200); // input program is too large for it to be stored in the available amount of memory
+            }
+        }
     }
 
     public void decodeAndExecuteInstruction(int instruction) {
@@ -269,6 +261,7 @@ public class Memory {
     /**
      * Fetches every instruction present in a provided ROM, storing them in
      * an array.
+     *
      * @param fileName name of the ROM, without the .ch8 file extension
      * @return an array of type int[]
      */
@@ -290,17 +283,11 @@ public class Memory {
             while (!eof) {
                 try {
                     instruction = input.readShort();
-                    instructions[i] =
-                            Integer.decode(
-                                "0x" + Integer.toHexString(
-                                        Short.toUnsignedInt(instruction)
-                                )
-                            );
+                    instructions[i] = Short.toUnsignedInt(instruction);
                 } catch (IOException e) {
                     eof = true;
                 }
             }
-
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
