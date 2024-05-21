@@ -14,25 +14,27 @@ import java.lang.ArrayIndexOutOfBoundsException;
  */
 
 public class Memory {
-    int[] memory;
-    short[] registers;
-    short soundTimer, delayTimer;
-    int I, pc;
-    CallStack stack;
+    private int[] memory;
+    private short[] registers;
+    private short soundTimer, delayTimer;
+    private int I, pc;
+    private CallStack stack;
+    private Screen screen;
+    private Keyboard keyboard;
 
     /**
      * Initialises the registers and runtime stack, and loads the ROM into
      * memory.
      */
-    public Memory(String romName) {
-        memory = new int[4096];         // 4 KiB of memory
+    public Memory(Screen screen, Keyboard keyboard) {
+        memory = new int[4096];           // 4 KiB of memory
         registers = new short[16];        // sixteen 8-bit registers
         soundTimer = delayTimer = 0;      // special purpose registers
         I = 0;
         pc = 0x200;                       // program counter
         stack = new CallStack(16);   // call/runtime stack
-
-        loadROM(romName);
+        this.screen = screen;
+        this.keyboard = keyboard;
     }
 
     /**
@@ -52,6 +54,26 @@ public class Memory {
                 System.exit(200); // input program is too large for it to be stored in the available amount of memory
             }
         }
+    }
+
+    /**
+     * Loads the fontset into memory starting at memory address 0x50.
+     * @param fonts the fontset
+     */
+    public void loadFonts(int[][] fonts) {
+        for (int i = 0; i < fonts.length; i++)
+            for (int j = 0; j < fonts[0].length; j++)
+                memory[i + 0x50] = fonts[i][j];
+    }
+
+    public void run() {
+        int instruction = memory[pc];
+        pc += 2;
+
+        decodeAndExecuteInstruction(instruction);
+
+        if (soundTimer > 0) --soundTimer;
+        if (delayTimer > 0) --delayTimer;
     }
 
     public void decodeAndExecuteInstruction(int instruction) {

@@ -20,8 +20,8 @@ public class Screen {
         clearScreen();
     }
 
-    /*
-     * This method sets every value in pixelArray to false/0/off.
+    /**
+     * Sets every value in pixelArray to false/0/off.
      */
     public void clearScreen() {
         for (int i = 0; i < HEIGHT * SCALE; i++) {

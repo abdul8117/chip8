@@ -43,10 +43,6 @@ public class Keyboard {
 
     private boolean[] isKeyDown = new boolean[16];
 
-    public Keyboard() {
-        // TODO Write constructor
-    }
-
     public void keyDown(int key) {
         throw new UnsupportedOperationException();
     }
@@ -55,4 +51,7 @@ public class Keyboard {
         throw new UnsupportedOperationException();
     }
 
+    public static int[][] getFonts() {
+        return FONT;
+    }
 }
