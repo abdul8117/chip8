@@ -58,12 +58,13 @@ public class Memory {
 
     /**
      * Loads the fontset into memory starting at memory address 0x50.
+     *
      * @param fonts the fontset
      */
     public void loadFonts(int[][] fonts) {
         for (int i = 0; i < fonts.length; i++)
             for (int j = 0; j < fonts[0].length; j++)
-                memory[i + 0x50] = fonts[i][j];
+                memory[0x50 + i + j] = fonts[i][j];
     }
 
     public void run() {
@@ -87,15 +88,11 @@ public class Memory {
         switch (instruction) {
             case 0x00E0:
                 // Clear the display
-                // TODO when the Screen has been implemented
+                screen.clearScreen();
                 break;
 
             case 0x00EE:
                 // Return from a subroutine.
-                // The interpreter sets the program counter to the address
-                // at the top of the stack, then subtracts 1 from the stack
-                // pointer.
-
                 pc = stack.peek();
 
                 try {
@@ -176,7 +173,7 @@ public class Memory {
                 break;
 
             case 0x000D:
-                // TODO for when we have implemented a screen
+                // TODO
                 break;
         }
 
@@ -226,31 +223,67 @@ public class Memory {
                 break;
 
             case 0x800E:
-                //Set Vx = Vx SHL 1.
+                // Set Vx = Vx SHL 1.
                 registers[0xF] = (short) (((registers[x] & 0x80) >> 7) == 1 ? 1 : 0);
                 registers[x] <<= 1;
                 break;
 
             case 0x9000:
+                // Skip next instruction if Vx != Vy.
                 if (registers[x] != registers[y])
                     pc += 2;
                 break;
         }
 
-        // Some of the following instructions won't be written until we
-        // have implemented the Keyboard class
         switch (instruction & 0xF0FF) {
             case 0xE09E:
+                if (keyboard.isKeyDown(x)) pc += 2;
                 break;
 
             case 0xE0A1:
+                if (!keyboard.isKeyDown(x)) pc += 2;
                 break;
 
             case 0xF007:
-                // Kathy
+                delayTimer = x;
                 break;
 
             case 0xF00A:
+                if (keyboard.isKeyDown(0))
+                    registers[x] = 0;
+                else if (keyboard.isKeyDown(1))
+                    registers[x] = 1;
+                else if (keyboard.isKeyDown(2))
+                    registers[x] = 2;
+                else if (keyboard.isKeyDown(3))
+                    registers[x] = 3;
+                else if (keyboard.isKeyDown(4))
+                    registers[x] = 4;
+                else if (keyboard.isKeyDown(5))
+                    registers[x] = 5;
+                else if (keyboard.isKeyDown(6))
+                    registers[x] = 6;
+                else if (keyboard.isKeyDown(7))
+                    registers[x] = 7;
+                else if (keyboard.isKeyDown(8))
+                    registers[x] = 8;
+                else if (keyboard.isKeyDown(9))
+                    registers[x] = 9;
+                else if (keyboard.isKeyDown(10))
+                    registers[x] = 10;
+                else if (keyboard.isKeyDown(11))
+                    registers[x] = 11;
+                else if (keyboard.isKeyDown(12))
+                    registers[x] = 12;
+                else if (keyboard.isKeyDown(13))
+                    registers[x] = 13;
+                else if (keyboard.isKeyDown(14))
+                    registers[x] = 14;
+                else if (keyboard.isKeyDown(15))
+                    registers[x] = 15;
+                else
+                    pc -= 2;
+
                 break;
 
             case 0xF015:
@@ -262,20 +295,35 @@ public class Memory {
                 break;
 
             case 0xF01E:
-                // Kathy
+                I += registers[x];
                 break;
 
             case 0xF029:
+                I = 0x50 + (5 * registers[x]);
                 break;
 
             case 0xF033:
+                int hundreds = Math.floorDiv(registers[x], 100);
+                int tens = Math.floorDiv(registers[x], 10) % 10;
+                int ones = registers[x] % 10;
+
+                memory[I] = hundreds;
+                memory[I + 1] = tens;
+                memory[I + 2] = ones;
+
                 break;
 
             case 0xF055:
+                // Store registers V0 through Vx in memory starting at location I.
+                for (int i = I; i < I + 16; i++)
+                    memory[i] = registers[x];
                 break;
 
             case 0xF065:
-                // TODO: figure out what this instruction should be doing
+                // Reads values from memory starting at location I into
+                // registers V0 through Vx
+                for (int i = 0; i < 16; i++)
+                    registers[i] = (short) memory[I + i];
                 break;
         }
     }

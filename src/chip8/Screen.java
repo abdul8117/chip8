@@ -24,11 +24,9 @@ public class Screen {
      * Sets every value in pixelArray to false/0/off.
      */
     public void clearScreen() {
-        for (int i = 0; i < HEIGHT * SCALE; i++) {
-            for (int j = 0; j < WIDTH * SCALE; j++) {
+        for (int i = 0; i < HEIGHT * SCALE; i++)
+            for (int j = 0; j < WIDTH * SCALE; j++)
                 pixelArray[i][j] = false;
-            }
-        }
     }
 
     public void renderScreen() {

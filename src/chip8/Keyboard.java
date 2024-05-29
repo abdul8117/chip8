@@ -41,7 +41,7 @@ public class Keyboard {
             {0xF0, 0x80, 0xF0, 0x80, 0x80}  // F
     };
 
-    private boolean[] isKeyDown = new boolean[16];
+    private boolean[] keysDown = new boolean[16];
 
     public void keyDown(int key) {
         throw new UnsupportedOperationException();
@@ -49,6 +49,10 @@ public class Keyboard {
 
     public void keyUp(int key) {
         throw new UnsupportedOperationException();
+    }
+
+    public boolean isKeyDown(int key) {
+        return keysDown[key];
     }
 
     public static int[][] getFonts() {
