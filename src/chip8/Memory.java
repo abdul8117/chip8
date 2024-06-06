@@ -1,6 +1,7 @@
 package chip8;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.Random;
 import java.lang.ArrayIndexOutOfBoundsException;
 
@@ -48,7 +49,8 @@ public class Memory {
 
         for (int i = 0; i < program.length; i++) {
             try {
-                memory[i + 0x200] = (short) program[i];
+                memory[i + 0x200] = program[i];
+//                System.out.println("Just stored " + Integer.toHexString(memory[i + 0x200]) + " into memory.");
             } catch (ArrayIndexOutOfBoundsException e) {
                 System.err.println("Program is too large.");
                 System.exit(200); // input program is too large for it to be stored in the available amount of memory
@@ -68,10 +70,24 @@ public class Memory {
     }
 
     public void run() {
-        int instruction = memory[pc];
+        int instruction = (memory[pc] << 8) | memory[pc + 1];
         pc += 2;
 
+        // for debugging purposes:
+        if (instruction == 0)
+            throw new RuntimeException();
+
+        System.out.println("Currently executing: " + Integer.toHexString(instruction));
+
         decodeAndExecuteInstruction(instruction);
+
+        try {
+            Thread.sleep(50);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        System.out.println("Finished executing: " + Integer.toHexString(instruction));
 
         if (soundTimer > 0) --soundTimer;
         if (delayTimer > 0) --delayTimer;
@@ -173,7 +189,36 @@ public class Memory {
                 break;
 
             case 0x000D:
-                // TODO
+                int xCoord = registers[x] % 64;
+                int yCoord = registers[y] % 32;
+                registers[0xF] = 0;
+
+                for (int i = 0; i < n; i++) {
+                    if (yCoord == 32) break;
+
+                    int mask = 0x80;
+                    for (int j = 0; j < 8; j++) {
+                        if (xCoord == 64) break;
+
+                        int pixel = memory[I + i] & mask;
+                        mask = mask >> 1;
+
+                        if (pixel != 0) {
+                            if (screen.getPixel(xCoord, yCoord))
+                                registers[0xF] = 1;
+
+                            screen.setPixel(xCoord, yCoord);
+                        }
+
+                        System.out.println("Set pixel at coordinates (" + xCoord + ", " + yCoord + ")");
+
+                        xCoord += 1;
+                    }
+
+                    yCoord += 1;
+                    xCoord = registers[x];
+                }
+
                 break;
         }
 
@@ -237,11 +282,11 @@ public class Memory {
 
         switch (instruction & 0xF0FF) {
             case 0xE09E:
-                if (keyboard.isKeyDown(x)) pc += 2;
+                if (keyboard.isKeyDown(registers[x])) pc += 2;
                 break;
 
             case 0xE0A1:
-                if (!keyboard.isKeyDown(x)) pc += 2;
+                if (!keyboard.isKeyDown(registers[x])) pc += 2;
                 break;
 
             case 0xF007:
@@ -336,8 +381,8 @@ public class Memory {
      * @return an array of type int[]
      */
     private static int[] getAllInstructions(String fileName) {
-        int[] instructions = new int[4096 - 512];
-        String path = "roms/" + fileName + "ch.8";
+        int[] romContent = new int[4096 - 512];
+        String path = "roms/" + fileName + ".ch8";
 
         try {
             DataInputStream input = new DataInputStream(
@@ -346,14 +391,17 @@ public class Memory {
                     )
             );
 
-            short instruction;
+            byte b;
             boolean eof = false;
             int i = 0;
 
             while (!eof) {
                 try {
-                    instruction = input.readShort();
-                    instructions[i] = Short.toUnsignedInt(instruction);
+                    b = input.readByte();
+                    System.out.println("Current byte is: " + Integer.toHexString(Byte.toUnsignedInt(b)));
+                    romContent[i] = Byte.toUnsignedInt(b);
+                    System.out.println("Loading byte " + Integer.toBinaryString(romContent[i]) + " into memory.");
+                    i += 1;
                 } catch (IOException e) {
                     eof = true;
                 }
@@ -362,6 +410,6 @@ public class Memory {
             throw new RuntimeException(e);
         }
 
-        return instructions;
+        return romContent;
     }
 }

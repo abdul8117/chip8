@@ -9,12 +9,14 @@ public class Screen {
     private static final int SCALE = 10;
 
     // true = white, false = black
-    private boolean[][] pixelArray = new boolean[WIDTH * SCALE][HEIGHT * SCALE];
+    private boolean[][] pixelArray =
+            new boolean[HEIGHT * SCALE][WIDTH * SCALE];
 
     private GraphicsContext gc;
+    public Canvas c;
 
     public Screen() {
-        Canvas c = new Canvas(WIDTH * SCALE, HEIGHT * SCALE);
+        c = new Canvas(WIDTH * SCALE, HEIGHT * SCALE);
         gc = c.getGraphicsContext2D();
         gc.fillRect(0, 0, c.getWidth(), c.getHeight()); // black screen
         clearScreen();
@@ -27,6 +29,8 @@ public class Screen {
         for (int i = 0; i < HEIGHT * SCALE; i++)
             for (int j = 0; j < WIDTH * SCALE; j++)
                 pixelArray[i][j] = false;
+
+        renderScreen();
     }
 
     public void renderScreen() {
@@ -37,7 +41,7 @@ public class Screen {
                 else
                     gc.setFill(Color.BLACK);
 
-                gc.fillRect(i, j, SCALE, SCALE);
+                gc.fillRect(i * SCALE, j * SCALE, SCALE, SCALE);
             }
         }
     }
@@ -46,7 +50,11 @@ public class Screen {
         return pixelArray[x * SCALE][y * SCALE];
     }
 
-    public void setPixel(int x, int y) {
+    public boolean setPixel(int x, int y) {
+        boolean collision = pixelArray[x * SCALE][y * SCALE];
+
         pixelArray[x * SCALE][y * SCALE] ^= true;
+
+        return collision;
     }
 }
