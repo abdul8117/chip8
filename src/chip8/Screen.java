@@ -4,8 +4,8 @@ import javafx.scene.canvas.*;
 import javafx.scene.paint.Color;
 
 public class Screen {
-    private static final int WIDTH = 64;
     private static final int HEIGHT = 32;
+    private static final int WIDTH = 64;
     private static final int SCALE = 10;
 
     // true = white, false = black
@@ -47,14 +47,10 @@ public class Screen {
     }
 
     public boolean getPixel(int x, int y) {
-        return pixelArray[x * SCALE][y * SCALE];
+        return pixelArray[y * SCALE][x * SCALE];
     }
 
-    public boolean setPixel(int x, int y) {
-        boolean collision = pixelArray[x * SCALE][y * SCALE];
-
-        pixelArray[x * SCALE][y * SCALE] ^= true;
-
-        return collision;
+    public void setPixel(int x, int y) {
+        pixelArray[y * SCALE][x * SCALE] ^= true;
     }
 }

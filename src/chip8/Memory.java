@@ -194,14 +194,16 @@ public class Memory {
                 registers[0xF] = 0;
 
                 for (int i = 0; i < n; i++) {
-                    if (yCoord == 32) break;
+                    if (yCoord >= 32) break;
 
                     int mask = 0x80;
                     for (int j = 0; j < 8; j++) {
-                        if (xCoord == 64) break;
+                        if (xCoord >= 64) break;
 
                         int pixel = memory[I + i] & mask;
                         mask = mask >> 1;
+
+                        System.out.println("Setting pixel at coordinates (" + xCoord + ", " + yCoord + ")");
 
                         if (pixel != 0) {
                             if (screen.getPixel(xCoord, yCoord))
@@ -209,8 +211,6 @@ public class Memory {
 
                             screen.setPixel(xCoord, yCoord);
                         }
-
-                        System.out.println("Set pixel at coordinates (" + xCoord + ", " + yCoord + ")");
 
                         xCoord += 1;
                     }

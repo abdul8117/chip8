@@ -31,10 +31,7 @@ public class Chip8 extends Application {
 
         while (true) {
             memory.run();
+            screen.renderScreen();
         }
-
-
-
-
     }
 }
