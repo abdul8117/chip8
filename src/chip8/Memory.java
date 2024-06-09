@@ -160,12 +160,6 @@ public class Memory {
                 registers[x] += kk;
                 break;
 
-            case 0x0009:
-                // Skip next instruction if Vx != Vy
-                if (registers[x] != registers[y])
-                    pc += 2;
-                break;
-
             case 0x000A:
                 // Set I = nnn.
                 I = nnn;

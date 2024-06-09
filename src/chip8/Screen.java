@@ -6,11 +6,11 @@ import javafx.scene.paint.Color;
 public class Screen {
     private static final int LENGTH = 64;
     private static final int HEIGHT = 32;
-    private static final int SCALE = 1;
+    private static final int SCALE = 10;
 
     // true = white, false = black
     private boolean[][] pixelArray =
-            new boolean[LENGTH * SCALE][HEIGHT * SCALE];
+            new boolean[LENGTH][HEIGHT];
 
     private GraphicsContext gc;
     public Canvas c;
@@ -26,14 +26,14 @@ public class Screen {
      * Sets every value in pixelArray to false/0/off.
      */
     public void clearScreen() {
-        for (int i = 0; i < HEIGHT * SCALE; i++)
-            for (int j = 0; j < LENGTH * SCALE; j++)
+        for (int i = 0; i < LENGTH; i++)
+            for (int j = 0; j < HEIGHT; j++)
                 pixelArray[i][j] = false;
     }
 
     public void renderScreen() {
-        for (int i = 0; i < HEIGHT * SCALE; i++) {
-            for (int j = 0; j < LENGTH * SCALE; j++) {
+        for (int i = 0; i < LENGTH; i++) {
+            for (int j = 0; j < HEIGHT; j++) {
                 if (pixelArray[i][j])
                     gc.setFill(Color.WHITE);
                 else
@@ -45,10 +45,10 @@ public class Screen {
     }
 
     public boolean getPixel(int x, int y) {
-        return pixelArray[y * SCALE][x * SCALE];
+        return pixelArray[x][y];
     }
 
     public void setPixel(int x, int y) {
-        pixelArray[y * SCALE][x * SCALE] ^= true;
+        pixelArray[x][y] ^= true;
     }
 }
