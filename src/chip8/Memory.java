@@ -80,12 +80,7 @@ public class Memory {
         System.out.println("Currently executing: " + Integer.toHexString(instruction));
 
         decodeAndExecuteInstruction(instruction);
-
-        try {
-            Thread.sleep(50);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        screen.renderScreen();
 
         System.out.println("Finished executing: " + Integer.toHexString(instruction));
 
