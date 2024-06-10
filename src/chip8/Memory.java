@@ -1,7 +1,6 @@
 package chip8;
 
 import java.io.*;
-import java.util.Arrays;
 import java.util.Random;
 import java.lang.ArrayIndexOutOfBoundsException;
 
@@ -50,7 +49,6 @@ public class Memory {
         for (int i = 0; i < program.length; i++) {
             try {
                 memory[i + 0x200] = program[i];
-//                System.out.println("Just stored " + Integer.toHexString(memory[i + 0x200]) + " into memory.");
             } catch (ArrayIndexOutOfBoundsException e) {
                 System.err.println("Program is too large.");
                 System.exit(200); // input program is too large for it to be stored in the available amount of memory
@@ -69,7 +67,7 @@ public class Memory {
                 memory[0x50 + i + j] = fonts[i][j];
     }
 
-    public void run() {
+    public void runNextInstruction() {
         int instruction = (memory[pc] << 8) | memory[pc + 1];
         pc += 2;
 
@@ -77,7 +75,14 @@ public class Memory {
         if (instruction == 0)
             throw new RuntimeException();
 
+        System.out.println("==============================");
         System.out.println("Currently executing: " + Integer.toHexString(instruction));
+        System.out.println("Register content: ");
+        for (int i = 0; i < registers.length; i++) {
+            System.out.println(i + ". " + registers[i]);
+        }
+
+        System.out.println("I register: " + I);
 
         decodeAndExecuteInstruction(instruction);
         screen.renderScreen();
@@ -92,8 +97,8 @@ public class Memory {
 
         int nnn = instruction & 0xFFF;
         short n = (short) (instruction & 0xF);
-        short x = (short) ((instruction & 0xF00) >> 8);
-        short y = (short) ((instruction & 0xF0) >> 4);
+        short x = (short) ((instruction & 0xF00) >>> 8);
+        short y = (short) ((instruction & 0xF0) >>> 4);
         short kk = (short) (instruction & 0xFF);
 
         switch (instruction) {
@@ -115,13 +120,13 @@ public class Memory {
                 break;
         }
 
-        switch ((instruction & 0xF000) >> 12) {
-            case 0x0001:
+        switch (instruction & 0xF000) {
+            case 0x1000:
                 // Jump to location nnn.
                 pc = nnn;
                 break;
 
-            case 0x0002:
+            case 0x2000:
                 // Call subroutine at nnn
                 try {
                     stack.push(pc);
@@ -132,52 +137,52 @@ public class Memory {
                 pc = nnn;
                 break;
 
-            case 0x0003:
+            case 0x3000:
                 // Skip next instruction if Vx = kk
                 if (registers[x] == kk)
                     pc += 2;
                 break;
 
-            case 0x0004:
+            case 0x4000:
                 // Skip next instruction if Vx != kk.
                 if (registers[x] != kk)
                     pc += 2;
                 break;
 
-            case 0x0005:
+            case 0x5000:
                 // Skip next instruction if Vx = Vy.
                 if (registers[x] == registers[y])
                     pc += 2;
                 break;
 
-            case 0x0006:
+            case 0x6000:
                 //Set Vx = kk.
                 registers[x] = kk;
                 break;
 
-            case 0x0007:
+            case 0x7000:
                 // Sets Vx to Vx + kk
-                registers[x] += kk;
+                registers[x] = (short) ((registers[x] + kk) & 0xFF);
                 break;
 
-            case 0x000A:
+            case 0xA000:
                 // Set I = nnn.
                 I = nnn;
                 break;
 
-            case 0x000B:
+            case 0xB000:
                 // Jump to location nnn + V0.
                 pc = nnn + registers[0];
                 break;
 
-            case 0x000C:
+            case 0xC000:
                 // Set Vx = random byte AND kk.
                 Random random = new Random();
                 short randomNum = (short) random.nextInt(256);
                 registers[x] = (short) (randomNum & kk);
                 break;
 
-            case 0x000D:
+            case 0xD000:
                 int xCoord = registers[x] % 64;
                 int yCoord = registers[y] % 32;
                 registers[0xF] = 0;
@@ -190,9 +195,7 @@ public class Memory {
                         if (xCoord >= 64) break;
 
                         int pixel = memory[I + i] & mask;
-                        mask = mask >> 1;
-
-                        System.out.println("Setting pixel at coordinates (" + xCoord + ", " + yCoord + ")");
+                        mask = mask >>> 1;
 
                         if (pixel != 0) {
                             if (screen.getPixel(xCoord, yCoord))
@@ -241,25 +244,27 @@ public class Memory {
             case 0x8005:
                 // Set Vx = Vx - Vy, set VF = NOT borrow.
                 registers[0xF] = (short) (registers[x] > registers[y] ? 1 : 0);
-                registers[x] -= registers[y];
+                registers[x] = (short) ((registers[x] - registers[y]) & 0xFF);
                 break;
 
             case 0x8006:
                 // Set Vx = Vx SHR 1.
-                registers[0xF] = (short) ((registers[x] & 1) == 1 ? 1 : 0);
-                registers[x] = (short) (registers[x] >> 1);
+                registers[0xF] = (short) ((registers[x] & 0x1) == 0x1 ? 1 : 0);
+                registers[x] = (short) (registers[x] >>> 1);
+
                 break;
 
             case 0x8007:
                 // Set Vx = Vy - Vx, set VF = NOT borrow.
                 registers[0xF] = (short) ((registers[y] > registers[x] ? 1 : 0));
-                registers[x] = (short) (registers[y] - registers[x]);
+                registers[x] = (short) ((registers[y] - registers[x]) & 0xFF);
                 break;
 
             case 0x800E:
                 // Set Vx = Vx SHL 1.
-                registers[0xF] = (short) (((registers[x] & 0x80) >> 7) == 1 ? 1 : 0);
-                registers[x] <<= 1;
+                registers[0xF] = (short) ((registers[x] & 0x80) == 0x80 ? 1 :
+                        0);
+                registers[x] = (short) ((registers[x] << 1) & 0xFF);
                 break;
 
             case 0x9000:
@@ -329,7 +334,7 @@ public class Memory {
                 break;
 
             case 0xF01E:
-                I += registers[x];
+                I = (I + registers[x]) & 0xFFF;
                 break;
 
             case 0xF029:
@@ -337,27 +342,29 @@ public class Memory {
                 break;
 
             case 0xF033:
-                int hundreds = Math.floorDiv(registers[x], 100);
-                int tens = Math.floorDiv(registers[x], 10) % 10;
-                int ones = registers[x] % 10;
+                int value = registers[x];
 
-                memory[I] = hundreds;
-                memory[I + 1] = tens;
-                memory[I + 2] = ones;
+                int hundreds = value / 100;
+                int tens = (value / 10) % 10;
+                int ones = value % 10;
+
+                memory[I] = (short) hundreds;
+                memory[I + 1] = (short) tens;
+                memory[I + 2] = (short) ones;
 
                 break;
 
             case 0xF055:
                 // Store registers V0 through Vx in memory starting at location I.
-                for (int i = I; i < I + 16; i++)
-                    memory[i] = registers[x];
+                for (int i = 0; i < registers.length; i++)
+                    memory[I + i] = registers[i];
                 break;
 
             case 0xF065:
                 // Reads values from memory starting at location I into
                 // registers V0 through Vx
-                for (int i = 0; i < 16; i++)
-                    registers[i] = (short) memory[I + i];
+                for (int i = 0; i <= x; i++)
+                    registers[i] = (short) (memory[I + i] & 0xFF);
                 break;
         }
     }

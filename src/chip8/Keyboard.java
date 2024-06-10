@@ -43,57 +43,57 @@ public class Keyboard {
             {0xF0, 0x80, 0xF0, 0x80, 0x80}  // F
     };
 
-    private boolean[] keysDown = new boolean[16];
+    private boolean[] keyStates = new boolean[16];
 
     public void keyDown(KeyCode key) {
         switch (key) {
             case DIGIT1:
-                keysDown[0] = true;
+                keyStates[0] = true;
                 break;
             case DIGIT2:
-                keysDown[1] = true;
+                keyStates[1] = true;
                 break;
             case DIGIT3:
-                keysDown[2] = true;
+                keyStates[2] = true;
                 break;
             case DIGIT4:
-                keysDown[3] = true;
+                keyStates[3] = true;
                 break;
             case Q:
-                keysDown[4] = true;
+                keyStates[4] = true;
                 break;
             case W:
-                keysDown[5] = true;
+                keyStates[5] = true;
                 break;
             case E:
-                keysDown[6] = true;
+                keyStates[6] = true;
                 break;
             case R:
-                keysDown[7] = true;
+                keyStates[7] = true;
                 break;
             case A:
-                keysDown[8] = true;
+                keyStates[8] = true;
                 break;
             case S:
-                keysDown[9] = true;
+                keyStates[9] = true;
                 break;
             case D:
-                keysDown[10] = true;
+                keyStates[10] = true;
                 break;
             case F:
-                keysDown[11] = true;
+                keyStates[11] = true;
                 break;
             case Z:
-                keysDown[12] = true;
+                keyStates[12] = true;
                 break;
             case X:
-                keysDown[13] = true;
+                keyStates[13] = true;
                 break;
             case C:
-                keysDown[14] = true;
+                keyStates[14] = true;
                 break;
             case V:
-                keysDown[15] = true;
+                keyStates[15] = true;
                 break;
             default:
                 break;
@@ -103,52 +103,52 @@ public class Keyboard {
     public void keyUp(KeyCode key) {
         switch (key) {
             case DIGIT1:
-                keysDown[0] = false;
+                keyStates[0] = false;
                 break;
             case DIGIT2:
-                keysDown[1] = false;
+                keyStates[1] = false;
                 break;
             case DIGIT3:
-                keysDown[2] = false;
+                keyStates[2] = false;
                 break;
             case DIGIT4:
-                keysDown[3] = false;
+                keyStates[3] = false;
                 break;
             case Q:
-                keysDown[4] = false;
+                keyStates[4] = false;
                 break;
             case W:
-                keysDown[5] = false;
+                keyStates[5] = false;
                 break;
             case E:
-                keysDown[6] = false;
+                keyStates[6] = false;
                 break;
             case R:
-                keysDown[7] = false;
+                keyStates[7] = false;
                 break;
             case A:
-                keysDown[8] = false;
+                keyStates[8] = false;
                 break;
             case S:
-                keysDown[9] = false;
+                keyStates[9] = false;
                 break;
             case D:
-                keysDown[10] = false;
+                keyStates[10] = false;
                 break;
             case F:
-                keysDown[11] = false;
+                keyStates[11] = false;
                 break;
             case Z:
-                keysDown[12] = false;
+                keyStates[12] = false;
                 break;
             case X:
-                keysDown[13] = false;
+                keyStates[13] = false;
                 break;
             case C:
-                keysDown[14] = false;
+                keyStates[14] = false;
                 break;
             case V:
-                keysDown[15] = false;
+                keyStates[15] = false;
                 break;
             default:
                 break;
@@ -156,7 +156,7 @@ public class Keyboard {
     }
 
     public boolean isKeyDown(int key) {
-        return keysDown[key];
+        return keyStates[key];
     }
 
     public static int[][] getFonts() {

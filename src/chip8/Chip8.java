@@ -26,14 +26,17 @@ public class Chip8 extends Application {
         stage.setScene(scene);
         stage.show();
 
-        memory.loadROM("test_opcode");
+        String romName = "test_opcode";
+        memory.loadROM(romName);
         memory.loadFonts(Keyboard.getFonts());
 
         new AnimationTimer() {
             @Override
             public void handle(long now) {
-                memory.run();
+                memory.runNextInstruction();
                 screen.renderScreen();
+                scene.setOnKeyPressed(event -> keyboard.keyDown(event.getCode()));
+                scene.setOnKeyReleased(event -> keyboard.keyUp(event.getCode()));
             }
         }.start();
     }
